@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpeakBetter</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .chat-container .chat-box {
+        background-color: #f9f9f9;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        overflow-y: scroll;
+        max-height: 800px;
+    }
+    .chat-container .input-box {
+        display: flex;
+    }
+    .chat-container .input-box input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border-radius: 5px 0 0 5px;
+        border: 1px solid #ccc;
+        border-right: none;
+        outline: none;
+    }
+    .chat-container .input-box button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid #4CAF50;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        outline: none;
+    }
+</style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="brand-logo">SpeakBetter</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="#">Courses</a></li>
+        <li><a href="#">Resources</a></li>
+        <li><a href="about-us">About Us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+  <br>
+
+<div class="chat-container">
+    <div class="chat-box" id="chat-box">
+        <p>Welcome! How can I assist you today?</p>
+    </div>
+    <div class="input-box">
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+function sendMessage() {
+    var userInput = document.getElementById("user-input").value;
+    if (userInput.trim() === "") return;
+
+    appendMessage("You", userInput);
+
+    // Send user input to Flask endpoint to get response
+    fetch("/writing_get_response/" + encodeURIComponent(userInput))
+    .then(response => response.text())
+    .then(data => {
+        appendMessage("Bot", data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    
+    document.getElementById("user-input").value = "";
+}
+
+function appendMessage(sender, message) {
+    var chatBox = document.getElementById("chat-box");
+    var messageElement = document.createElement("div");
+    messageElement.innerHTML = "<strong>" + sender + ":</strong> " + message;
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
+
+</body>
+</html>
+
+

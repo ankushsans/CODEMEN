@@ -1,5 +1,4 @@
 import google.generativeai as genai
-import threading
 from TTS.api import TTS
 
 tts = TTS("tts_models/en/ljspeech/tacotron2-DDC").to("cpu")
@@ -8,6 +7,7 @@ genai.configure(api_key="AIzaSyCcfJO4OjepfZxvbs-Qq7HdEaWkAON2BDs")
 model = genai.GenerativeModel("gemini-pro")
 
 chat = model.start_chat(history=[])
+
 
 def generate_audio(text, file_path):
     tts.tts_to_file(text=text, file_path=file_path)
