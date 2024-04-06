@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medium Difficulty - SpeakBetter</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="brand-logo">SpeakBetter</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="#">Courses</a></li>
+        <li><a href="#">Resources</a></li>
+        <li><a href="about-us">About Us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Practice Section -->
+  <section class="practice">
+    <div class="container">
+      <h1>Practice Speaking</h1>
+      <br>
+      <div class="sample-text">
+          <p>{{ sample_text }}</p>
+      </div>
+      <br>
+      <button id="start-recording" class="btn btn-primary">Start Recording</button>
+      <button id="play-audio" class="btn btn-primary">Play Audio</button>
+      <div class="response">
+          <p>{{ response }}</p>
+      </div>
+      <br>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 SpeakBetter. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript for Audio Recording -->
+  <script>
+    const startRecordingButton = document.getElementById('start-recording');
+
+    startRecordingButton.addEventListener('click', () => {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          const chunks = [];
+          mediaRecorder.ondataavailable = e => {
+            chunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+            const audioURL = URL.createObjectURL(blob);
+            const audio = new Audio(audioURL);
+            audio.controls = true;
+            document.body.appendChild(audio);
+          };
+
+          setTimeout(() => {
+            mediaRecorder.stop();
+          }, 5000); // Change the duration of recording as needed
+        })
+        .catch(error => {
+          console.error('Error accessing microphone:', error);
+        });
+    });
+
+    const playAudioButton = document.getElementById('play-audio');
+
+    playAudioButton.addEventListener('click', () => {
+      const audio = new Audio("{{ "static/cache/speech" + num + ".wav" }}");
+      audio.play();
+    });
+  </script>
+
+</body>
+</html>
